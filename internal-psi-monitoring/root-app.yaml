@@ -5,16 +5,15 @@ metadata:
   namespace: argocd
 spec:
   project: default
-
   source:
-    repoURL: https://github.com/oyegokeodev/oye-gitops.git
-    targetRevision: main
+    repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
+    targetRevision: HEAD
     path: internal-psi-monitoring/applications
-
+    directory:
+      recurse: true # Ensures all apps in the directory are managed
   destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd # You can set this to "" or a management namespace if preferred
   syncPolicy:
     automated:
       prune: true
