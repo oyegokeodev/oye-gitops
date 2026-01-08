@@ -1,0 +1,56 @@
+replicas: 3
+
+deploymentStrategy:
+  type: RollingUpdate
+
+envFromSecrets:
+  - name: grafana-db-secret
+
+grafana.ini:
+  database:
+    type: postgres
+    host: your-postgres-endpoint.amazonaws.com:5432
+    name: grafana
+    user: ${GF_DATABASE_USER}
+    password: ${GF_DATABASE_PASSWORD}
+    ssl_mode: require
+
+  session:
+    provider: database
+
+  server:
+    enable_gzip: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - grafana.example.com
+  tls:
+    - secretName: grafana-tls
+      hosts:
+        - grafana.example.com
+
+persistence:
+  enabled: true
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 30
+
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 60
