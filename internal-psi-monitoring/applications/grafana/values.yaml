@@ -9,10 +9,10 @@ envFromSecrets:
 grafana.ini:
   database:
     type: postgres
-    host: your-postgres-endpoint.amazonaws.com:5432
+    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
     name: grafana
-    user: ${GF_DATABASE_USER}
-    password: ${GF_DATABASE_PASSWORD}
+    user: avnadmin
+    password: "CHANGE_THIS_TO_YOUR_PASSWORD"
     ssl_mode: require
 
   session:
