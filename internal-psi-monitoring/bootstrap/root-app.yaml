@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/oyegokeodev/oye-gitops.git
     targetRevision: main
-    path: internal-psi-monitoring
+    path: applications
 
   destination:
     server: https://kubernetes.default.svc
