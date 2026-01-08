@@ -5,15 +5,18 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://github.com/n8n-io/n8n-helm-chart
-    targetRevision: main
-    path: charts/n8n
-    helm:
-      valueFiles:
-        - values-n8n.yaml
+  sources:
+    - repoURL: 'https://github.com/8gears/n8n-helm-chart.git'
+      targetRevision: master
+      path: .
+      helm:
+        valueFiles:
+          - $myrepo/internal-psi-monitoring/applications/n8n/values-n8n.yaml
+    - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
+      targetRevision: HEAD
+      ref: myrepo
   destination:
-    server: https://kubernetes.default.svc
+    server: 'https://kubernetes.default.svc'
     namespace: n8n
   syncPolicy:
     automated:
