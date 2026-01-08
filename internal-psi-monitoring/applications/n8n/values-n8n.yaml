@@ -1,0 +1,28 @@
+# Minimal values for n8n Helm deployment
+image:
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 5678
+
+persistence:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+n8n:
+  basicAuth:
+    enabled: true
+    user: admin
+    password: changeme
+  webhook:
+    url: ""
+
+# Add more configuration as needed
