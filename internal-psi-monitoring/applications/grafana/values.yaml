@@ -12,7 +12,8 @@ grafana.ini:
     host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
     name: grafana
     user: avnadmin
-    password: AVNS_q7jtos-ALjVmQUsjrKo
+    existingSecret: grafana-db
+    existingSecretPasswordKey: password
     ssl_mode: require
 
   session:
