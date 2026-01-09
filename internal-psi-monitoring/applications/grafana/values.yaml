@@ -6,6 +6,11 @@ deploymentStrategy:
     maxUnavailable: 1
     maxSurge: 0
 
+# 0. ENABLE HEADLESS SERVICE (CRITICAL FIX)
+# This creates the 'grafana-headless' Kubernetes Service.
+# Without this, the 'ha_peers' DNS lookup below fails with "server misbehaving".
+headlessService: true
+
 # 1. INJECT PASSWORD SECURELY
 # Map the Kubernetes Secret key to an Environment Variable
 envValueFrom:
@@ -29,7 +34,8 @@ grafana.ini:
   session:
     provider: database
   # 3. UNIFIED ALERTING FOR HA
-  # Ensures alerts are not sent duplicate times by different replicas
+  # Ensures alerts are not sent duplicate times by different replicas.
+  # Requires 'headlessService: true' above.
   unified_alerting:
     enabled: true
     ha_peers: "grafana-headless:9094" 
