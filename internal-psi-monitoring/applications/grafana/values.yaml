@@ -1,43 +1,41 @@
-replicas: 2
+replicas: 3
 
 deploymentStrategy:
   type: RollingUpdate
 
-securityContext:
-  runAsUser: 472
-  runAsGroup: 472
-  fsGroup: 472
-
-containerSecurityContext:
-  runAsUser: 472
-  runAsGroup: 472
-
-initChownData:
-  enabled: true
-
 envFromSecrets:
   - name: grafana-db
 
+grafana.ini:
+  database:
+    type: postgres
+    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
+    name: grafana
+    user: grafana_user
+    password: secure_password
+    ssl_mode: require
 
-database:
-  type: postgres
-  host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
-  name: grafana
-  user: grafana_user
-  existingSecret: grafana-db
-  existingSecretPasswordKey: password
-  ssl_mode: require
+  session:
+    provider: database
 
-# session:
-#   provider: database
-
-# server:
-#   enable_gzip: true
+  server:
+    enable_gzip: true
 
 service:
   type: ClusterIP
   port: 80
 
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - grafana.example.com
+  tls:
+    - secretName: grafana-tls
+      hosts:
+        - grafana.example.com
 
 persistence:
   enabled: true
