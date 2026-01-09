@@ -39,6 +39,9 @@ grafana.ini:
     conn_max_lifetime: 14400
   session:
     provider: database
+    # Critical for HA: ensures both pods see the same login sessions
+    provider_config: "user=$GF_DATABASE_USER password=$GF_DATABASE_PASSWORD host=pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com port=20109 dbname=defaultdb sslmode=require"
+    cookie_secure: true
   # 3. UNIFIED ALERTING FOR HA
   # Ensures alerts are not sent duplicate times by different replicas.
   # Requires 'headlessService: true' above.

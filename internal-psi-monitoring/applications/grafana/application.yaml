@@ -25,6 +25,14 @@ spec:
       namespace: monitoring
       jsonPointers:
         - /data/admin-password
+    - group: apps
+      kind: Deployment
+      name: grafana
+      namespace: monitoring
+      jsonPointers:
+        - /spec/template/metadata/annotations/checksum~1config
+        - /spec/template/metadata/annotations/checksum~1secret
+        - /spec/template/metadata/annotations/checksum~1dashboard-provider
   syncPolicy:
     automated:
       prune: true
