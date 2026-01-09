@@ -4,7 +4,7 @@ deploymentStrategy:
   type: RollingUpdate
 
 envFromSecrets:
-  - name: grafana-db-secret
+  - name: grafana-db
 
 grafana.ini:
   database:
