@@ -22,10 +22,6 @@ envValueFrom:
 # 2. CONFIGURE GRAFANA.INI
 # All config must go here. We use the Env Var for the password.
 grafana.ini:
-  admin:
-    existingSecret: "my-grafana-admin-secret"
-    userKey: admin-user
-    passwordKey: admin-password
   server:
     enable_gzip: true
   database:
