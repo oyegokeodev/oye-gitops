@@ -1,4 +1,4 @@
-replicas: 3
+replicas: 2
 
 deploymentStrategy:
   type: RollingUpdate
@@ -16,11 +16,11 @@ database:
   existingSecretPasswordKey: password
   ssl_mode: require
 
-session:
-  provider: database
+# session:
+#   provider: database
 
-server:
-  enable_gzip: true
+# server:
+#   enable_gzip: true
 
 service:
   type: ClusterIP
