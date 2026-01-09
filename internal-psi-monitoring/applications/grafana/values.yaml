@@ -6,19 +6,21 @@ deploymentStrategy:
 envFromSecrets:
   - name: grafana-db
 
-grafana.ini:
-  database:
-    type: postgres
-    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
-    name: grafana
-    user: grafana_user
-    existingSecret: grafana-db
-    existingSecretPasswordKey: password
-    ssl_mode: require
-  session:
-    provider: database
-  server:
-    enable_gzip: true
+
+database:
+  type: postgres
+  host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
+  name: grafana
+  user: grafana_user
+  existingSecret: grafana-db
+  existingSecretPasswordKey: password
+  ssl_mode: require
+
+session:
+  provider: database
+
+server:
+  enable_gzip: true
 
 service:
   type: ClusterIP
