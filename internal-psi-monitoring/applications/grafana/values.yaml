@@ -3,23 +3,40 @@ replicas: 3
 deploymentStrategy:
   type: RollingUpdate
 
-envFromSecrets:
-  - name: grafana-db
+# 1. INJECT PASSWORD SECURELY
+# Map the Kubernetes Secret key to an Environment Variable
+envValueFrom:
+  GF_DATABASE_PASSWORD:
+    secretKeyRef:
+      name: grafana-db
+      key: password
 
-database:
-  type: postgres
-  host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
-  name: grafana
-  user: grafana_user
-  existingSecret: grafana-db
-  existingSecretPasswordKey: password
-  ssl_mode: require
-
-  session:
-    provider: database
-
+# 2. CONFIGURE GRAFANA.INI
+# All config must go here. We use the Env Var for the password.
+grafana.ini:
   server:
     enable_gzip: true
+  database:
+    type: postgres
+    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
+    name: grafana
+    user: grafana_user
+    password: $__env{GF_DATABASE_PASSWORD}
+    ssl_mode: require
+  session:
+    provider: database
+  # 3. UNIFIED ALERTING FOR HA
+  # Ensures alerts are not sent duplicate times by different replicas
+  unified_alerting:
+    enabled: true
+    ha_peers: "grafana-headless:9094" 
+
+# 4. PERSISTENCE IN HA
+# RWO volumes fail with replicas: 3. 
+# Since you use external Postgres for data, users, and dashboards,
+# we can disable local storage.
+persistence:
+  enabled: false
 
 service:
   type: ClusterIP
@@ -36,12 +53,6 @@ ingress:
     - secretName: grafana-tls
       hosts:
         - grafana.example.com
-
-persistence:
-  enabled: true
-  size: 10Gi
-  accessModes:
-    - ReadWriteOnce
 
 readinessProbe:
   httpGet:
