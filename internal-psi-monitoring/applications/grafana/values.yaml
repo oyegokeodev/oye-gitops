@@ -3,6 +3,18 @@ replicas: 2
 deploymentStrategy:
   type: RollingUpdate
 
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
+
+containerSecurityContext:
+  runAsUser: 472
+  runAsGroup: 472
+
+initChownData:
+  enabled: true
+
 envFromSecrets:
   - name: grafana-db
 
