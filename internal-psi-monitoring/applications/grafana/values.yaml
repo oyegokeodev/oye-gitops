@@ -1,4 +1,4 @@
-replicas: 3 # Scaled back to 3 now that connection limits are fixed.
+replicas: 2 # Scaled back to 2 now that connection limits are fixed.
 
 deploymentStrategy:
   type: RollingUpdate
