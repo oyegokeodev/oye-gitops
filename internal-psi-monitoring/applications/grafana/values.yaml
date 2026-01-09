@@ -32,10 +32,10 @@ grafana.ini:
     password: $__env{GF_DATABASE_PASSWORD}
     ssl_mode: require
     # LIMIT DB CONNECTIONS (Fix for "remaining connection slots" error)
-    # 10 connections * 3 replicas = 30 total connections. 
-    # This stays well below standard Cloud Postgres limits.
-    max_open_conn: 10
-    max_idle_conn: 10
+    # 5 connections * 3 replicas = 15 total connections. 
+    # This stays safely below your database limit of 20.
+    max_open_conn: 3
+    max_idle_conn: 3
     conn_max_lifetime: 14400
   session:
     provider: database
