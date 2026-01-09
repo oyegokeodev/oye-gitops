@@ -1,4 +1,4 @@
-replicas: 3 # Changed from 3 to 1 to fix DB migration lock race condition. Scale back to 3 after first healthy deploy.
+replicas: 3 # Scaled back to 3 now that connection limits are fixed.
 
 deploymentStrategy:
   type: RollingUpdate
@@ -31,6 +31,12 @@ grafana.ini:
     user: grafana_user
     password: $__env{GF_DATABASE_PASSWORD}
     ssl_mode: require
+    # LIMIT DB CONNECTIONS (Fix for "remaining connection slots" error)
+    # 10 connections * 3 replicas = 30 total connections. 
+    # This stays well below standard Cloud Postgres limits.
+    max_open_conn: 10
+    max_idle_conn: 10
+    conn_max_lifetime: 14400
   session:
     provider: database
   # 3. UNIFIED ALERTING FOR HA
