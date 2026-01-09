@@ -26,17 +26,6 @@ service:
   type: ClusterIP
   port: 80
 
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - grafana.example.com
-  tls:
-    - secretName: grafana-tls
-      hosts:
-        - grafana.example.com
 
 persistence:
   enabled: true
