@@ -62,7 +62,7 @@ service:
 
 ingress:
   enabled: false
-  ingressClassName: nginx
+  ingressClassName: alb
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
