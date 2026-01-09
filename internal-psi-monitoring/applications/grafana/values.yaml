@@ -11,7 +11,7 @@ grafana.ini:
     type: postgres
     host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
     name: grafana
-    user: avnadmin
+    user: grafana
     existingSecret: grafana-db
     existingSecretPasswordKey: password
     ssl_mode: require
