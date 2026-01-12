@@ -5,7 +5,7 @@ main:
   extraEnvVars:
     # 1. Fix the "Spinning Setup" by switching from SSE to WebSockets
     N8N_PUSH_BACKEND: "websocket"
-    
+    NODE_TLS_REJECT_UNAUTHORIZED: "0"
     # 2. Define your encryption key so it doesn't change on pod restarts
     N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
     
