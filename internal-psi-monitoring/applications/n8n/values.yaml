@@ -1,16 +1,33 @@
-# 1. DATABASE CONFIGURATION (Schema-compliant)
+# 1. DATABASE CONFIGURATION
+# In this specific chart version, DB settings must be inside 'main'
 db:
   type: postgresdb
-  # The chart uses 'externalPostgresql' for non-embedded databases
+
+# 2. MAIN APPLICATION SETTINGS
+main:
+  # External Postgres settings go here for this chart
   externalPostgresql:
     host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
     port: 20109
     database: n8n
     username: n8n_user
-    # Key name in the secret must be 'postgres-password' by default in this chart
-    existingSecret: n8n-db-secret 
+    # The secret name containing the 'password' key
+    existingSecret: n8n-db-secret
+  
+  # Environment variables go under 'config' or 'env' inside 'main'
+  env:
+    - name: N8N_HOST
+      value: "n8n.example.com"
+    - name: N8N_PROTOCOL
+      value: "https"
+    - name: GENERIC_TIMEZONE
+      value: "UTC"
+    - name: N8N_SECURE_COOKIE
+      value: "true"
+    - name: N8N_ENABLE_COMMUNITY_NODES
+      value: "true"
 
-# 2. INGRESS CONFIGURATION (AWS ALB Shared)
+# 3. INGRESS (AWS ALB Shared)
 # ingress:
 #   enabled: true
 #   className: alb
@@ -21,7 +38,6 @@ db:
 #     alb.ingress.kubernetes.io/group.order: "20"
 #     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
 #     alb.ingress.kubernetes.io/ssl-redirect: '443'
-#     # Health check path for n8n is /healthz
 #     alb.ingress.kubernetes.io/healthcheck-path: /healthz
 #     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
 #     alb.ingress.kubernetes.io/success-codes: "200"
@@ -30,13 +46,3 @@ db:
 #       paths:
 #         - path: /
 #           pathType: Prefix
-
-# 3. N8N ENVIRONMENT VARIABLES
-# The chart puts extra config here, not under a 'config' block
-extraEnv:
-  N8N_HOST: "n8n.example.com"
-  N8N_PROTOCOL: "https"
-  GENERIC_TIMEZONE: "UTC"
-  N8N_SECURE_COOKIE: "true"
-  # Enable community nodes as you requested the community version
-  N8N_ENABLE_COMMUNITY_NODES: "true"
