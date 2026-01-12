@@ -1,85 +1,85 @@
-replicas: 2 # Scaled back to 2 now that connection limits are fixed.
+# replicas: 2 # Scaled back to 2 now that connection limits are fixed.
 
-deploymentStrategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxUnavailable: 1
-    maxSurge: 0
+# deploymentStrategy:
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxUnavailable: 1
+#     maxSurge: 0
 
-# 0. ENABLE HEADLESS SERVICE (CRITICAL FIX)
-# This creates the 'grafana-headless' Kubernetes Service.
-# Without this, the 'ha_peers' DNS lookup below fails with "server misbehaving".
-headlessService: true
+# # 0. ENABLE HEADLESS SERVICE (CRITICAL FIX)
+# # This creates the 'grafana-headless' Kubernetes Service.
+# # Without this, the 'ha_peers' DNS lookup below fails with "server misbehaving".
+# headlessService: true
 
-# 1. INJECT PASSWORD SECURELY
-# Map the Kubernetes Secret key to an Environment Variable
-envValueFrom:
-  GF_DATABASE_PASSWORD:
-    secretKeyRef:
-      name: grafana-db
-      key: password
+# # 1. INJECT PASSWORD SECURELY
+# # Map the Kubernetes Secret key to an Environment Variable
+# envValueFrom:
+#   GF_DATABASE_PASSWORD:
+#     secretKeyRef:
+#       name: grafana-db
+#       key: password
 
-# 2. CONFIGURE GRAFANA.INI
-# All config must go here. We use the Env Var for the password.
-grafana.ini:
-  server:
-    enable_gzip: true
-  database:
-    type: postgres
-    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
-    name: grafana
-    user: grafana_user
-    password: $__env{GF_DATABASE_PASSWORD}
-    ssl_mode: require
-    # LIMIT DB CONNECTIONS (Fix for "remaining connection slots" error)
-    # 5 connections * 3 replicas = 15 total connections. 
-    # This stays safely below your database limit of 20.
-    max_open_conn: 3
-    max_idle_conn: 3
-    conn_max_lifetime: 14400
-  session:
-    provider: database
-    # Critical for HA: ensures both pods see the same login sessions
-    provider_config: "user=$GF_DATABASE_USER password=$GF_DATABASE_PASSWORD host=pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com port=20109 dbname=defaultdb sslmode=require"
-    cookie_secure: true
-  # 3. UNIFIED ALERTING FOR HA
-  # Ensures alerts are not sent duplicate times by different replicas.
-  # Requires 'headlessService: true' above.
-  unified_alerting:
-    enabled: true
-    ha_peers: "grafana-headless:9094" 
+# # 2. CONFIGURE GRAFANA.INI
+# # All config must go here. We use the Env Var for the password.
+# grafana.ini:
+#   server:
+#     enable_gzip: true
+#   database:
+#     type: postgres
+#     host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com:20109
+#     name: grafana
+#     user: grafana_user
+#     password: $__env{GF_DATABASE_PASSWORD}
+#     ssl_mode: require
+#     # LIMIT DB CONNECTIONS (Fix for "remaining connection slots" error)
+#     # 5 connections * 3 replicas = 15 total connections. 
+#     # This stays safely below your database limit of 20.
+#     max_open_conn: 3
+#     max_idle_conn: 3
+#     conn_max_lifetime: 14400
+#   session:
+#     provider: database
+#     # Critical for HA: ensures both pods see the same login sessions
+#     provider_config: "user=$GF_DATABASE_USER password=$GF_DATABASE_PASSWORD host=pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com port=20109 dbname=defaultdb sslmode=require"
+#     cookie_secure: true
+#   # 3. UNIFIED ALERTING FOR HA
+#   # Ensures alerts are not sent duplicate times by different replicas.
+#   # Requires 'headlessService: true' above.
+#   unified_alerting:
+#     enabled: true
+#     ha_peers: "grafana-headless:9094" 
 
-# 4. PERSISTENCE IN HA
-# RWO volumes fail with replicas: 3. 
-# Since you use external Postgres for data, users, and dashboards,
-# we can disable local storage.
-persistence:
-  enabled: false
+# # 4. PERSISTENCE IN HA
+# # RWO volumes fail with replicas: 3. 
+# # Since you use external Postgres for data, users, and dashboards,
+# # we can disable local storage.
+# persistence:
+#   enabled: false
 
-service:
-  type: ClusterIP
-  port: 80
+# service:
+#   type: ClusterIP
+#   port: 80
 
-ingress:
-  enabled: false
-  ingressClassName: alb
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - grafana.example.com
-  tls:
-    - secretName: grafana-tls
-      hosts:
-        - grafana.example.com
+# ingress:
+#   enabled: false
+#   ingressClassName: alb
+#   annotations:
+#     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#   hosts:
+#     - grafana.example.com
+#   tls:
+#     - secretName: grafana-tls
+#       hosts:
+#         - grafana.example.com
 
-readinessProbe:
-  httpGet:
-    path: /api/health
-    port: 3000
-  initialDelaySeconds: 30
+# readinessProbe:
+#   httpGet:
+#     path: /api/health
+#     port: 3000
+#   initialDelaySeconds: 30
 
-livenessProbe:
-  httpGet:
-    path: /api/health
-    port: 3000
-  initialDelaySeconds: 60
+# livenessProbe:
+#   httpGet:
+#     path: /api/health
+#     port: 3000
+#   initialDelaySeconds: 60
