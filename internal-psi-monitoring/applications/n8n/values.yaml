@@ -1,0 +1,51 @@
+# 1. DATABASE CONFIGURATION (Postgres)
+db:
+  type: postgresdb
+  postgresdb:
+    database: n8n
+    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
+    port: 20109
+    user: n8n_user
+    # Link to the same secret pattern we used for Grafana
+    existingSecret: n8n-db-secret 
+    secretKey: password
+
+# 2. INGRESS CONFIGURATION (AWS ALB Shared)
+# ingress:
+#   enabled: true
+#   className: alb
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     # Sharing the same ALB as Grafana
+#     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
+#     alb.ingress.kubernetes.io/group.order: "20" # Higher than Grafana
+#     # SSL and Redirects
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+#     alb.ingress.kubernetes.io/ssl-redirect: '443'
+#     # Health Check (Fast interval as requested)
+#     alb.ingress.kubernetes.io/healthcheck-path: /healthz
+#     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
+#     alb.ingress.kubernetes.io/success-codes: "200"
+#   hosts:
+#     - host: n8n.example.com
+#       paths:
+#         - path: /
+#           pathType: Prefix
+
+# 3. N8N SPECIFIC SETTINGS
+config:
+  # Crucial: n8n needs to know its own URL for webhooks to work
+  n8n_host: n8n.example.com
+  n8n_protocol: https
+  # Set timezone
+  timezone: "UTC"
+
+# 4. RESOURCES
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
