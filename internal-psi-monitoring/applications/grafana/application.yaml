@@ -1,41 +1,41 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: grafana
-  namespace: argocd
-spec:
-  project: default
-  sources:
-    - repoURL: 'https://github.com/grafana/helm-charts.git'
-      targetRevision: main
-      path: charts/grafana
-      helm:
-        valueFiles:
-          - $myrepo/internal-psi-monitoring/applications/grafana/values.yaml
-    - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
-      targetRevision: HEAD
-      ref: myrepo
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: monitoring
-  ignoreDifferences:
-    - group: ""
-      kind: Secret
-      name: grafana
-      namespace: monitoring
-      jsonPointers:
-        - /data/admin-password
-    - group: apps
-      kind: Deployment
-      name: grafana
-      namespace: monitoring
-      jsonPointers:
-        - /spec/template/metadata/annotations/checksum~1config
-        - /spec/template/metadata/annotations/checksum~1secret
-        - /spec/template/metadata/annotations/checksum~1dashboard-provider
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: grafana
+#   namespace: argocd
+# spec:
+#   project: default
+#   sources:
+#     - repoURL: 'https://github.com/grafana/helm-charts.git'
+#       targetRevision: main
+#       path: charts/grafana
+#       helm:
+#         valueFiles:
+#           - $myrepo/internal-psi-monitoring/applications/grafana/values.yaml
+#     - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
+#       targetRevision: HEAD
+#       ref: myrepo
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: monitoring
+#   ignoreDifferences:
+#     - group: ""
+#       kind: Secret
+#       name: grafana
+#       namespace: monitoring
+#       jsonPointers:
+#         - /data/admin-password
+#     - group: apps
+#       kind: Deployment
+#       name: grafana
+#       namespace: monitoring
+#       jsonPointers:
+#         - /spec/template/metadata/annotations/checksum~1config
+#         - /spec/template/metadata/annotations/checksum~1secret
+#         - /spec/template/metadata/annotations/checksum~1dashboard-provider
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true
