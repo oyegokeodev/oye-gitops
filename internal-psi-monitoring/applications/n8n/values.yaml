@@ -1,22 +1,24 @@
-# In version 1.16.19, most settings are nested under 'main'
+# 1. MAIN APPLICATION SETTINGS
 main:
-  # -- Number of main nodes. Only enterprise license users can have one leader main node and mutiple follower main nodes.
   count: 1
-  # -- Whether to enable the PodDisruptionBudget for the main pod.
+  # ADDED: Configuration block for environment variables
+  config:
+    # Fix for the "Spinning Setup" issue
+    N8N_PUSH_BACKEND: "websocket" 
+    # Since you are running locally for now
+    N8N_HOST: "localhost"
+    N8N_PROTOCOL: "http"
+    # Essential for credentials security
+    N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
+    # Enables community nodes as requested
+    N8N_ENABLE_COMMUNITY_NODES: "true"
+
   pdb:
-    # -- Whether to enable the PodDisruptionBudget
     enabled: true
-    # -- Minimum number of available replicas
     minAvailable: 1
-    # -- Maximum number of unavailable replicas
     maxUnavailable: null
 
-  # -- This block is for setting up the resource management for the main pod more information can be found here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
   resources: 
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     requests:
       cpu: 100m
       memory: 128Mi
@@ -24,62 +26,50 @@ main:
       cpu: 2000m
       memory: 1Gi
 
-  # -- This is to setup the liveness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
     httpGet:
       path: /healthz
       port: http
 
-  # -- This is to setup the readiness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   readinessProbe:
     httpGet:
       path: /healthz/readiness
       port: http
 
+# 2. DATABASE CONFIGURATION
 db:
+  type: postgresdb
   postgresdb:
-    # -- Control how many parallel open Postgres connections n8n should have. Increasing it may help with resource utilization, but too many connections may degrade performance.
     poolSize: 2
-    # -- Postgres connection timeout (ms).
     connectionTimeout: 20000
-    # -- Amount of time before an idle connection is eligible for eviction for being idle.
     idleConnectionTimeout: 30000
-    # -- The PostgreSQL schema.
     schema: public
-    # -- The PostgreSQL connection SSL settings. Find more information from here: https://docs.n8n.io/hosting/configuration/supported-databases-settings/#postgresdb
     ssl:
-      # -- Whether to enable SSL.
       enabled: true
-      # -- If n8n should reject unauthorized SSL connections (true) or not (false).
       rejectUnauthorized: false
   
-  # Database must be under 'main' for this chart version
-  # -- External PostgreSQL parameters
+# 3. EXTERNAL POSTGRESQL (Root level for this chart)
 externalPostgresql:
-  # -- External PostgreSQL server host
   host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
-  # -- External PostgreSQL username
   username: n8n_user
   port: 20109
-  # -- The name of the external PostgreSQL database. For more information: https://docs.n8n.io/hosting/configuration/supported-databases-settings/#required-permissions
   database: n8n
-  # -- The name of an existing secret with PostgreSQL (must contain key `postgres-password`) and credentials.
-  # When it's set, the `externalPostgresql.password` parameter is ignored
-  existingSecret: n8n-db-secret
-      
+  existingSecret: n8n-db-secret # Key must be 'password' inside the secret
 
-# Ingress remains at the root level
-# ingress:
-#   enabled: true
-#   className: alb
-#   annotations:
-#     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
-#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-#     alb.ingress.kubernetes.io/ssl-redirect: '443'
-#     alb.ingress.kubernetes.io/healthcheck-path: /healthz
-#   hosts:
-#     - host: n8n.example.com
-#       paths:
-#         - path: /
-#           pathType: Prefix
+# 4. INGRESS (AWS ALB)
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: "psi-monitoring"
+    alb.ingress.kubernetes.io/group.order: "20"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+  hosts:
+    - host: n8n.example.com
+      paths:
+        - path: /
+          pathType: Prefix
