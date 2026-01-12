@@ -55,19 +55,19 @@ externalPostgresql:
   existingSecret: n8n-db-secret # Key must be 'password' inside the secret
 
 # 4. INGRESS (AWS ALB)
-ingress:
-  enabled: true
-  className: alb
-  annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/group.name: "psi-monitoring"
-    alb.ingress.kubernetes.io/group.order: "20"
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/ssl-redirect: '443'
-    alb.ingress.kubernetes.io/healthcheck-path: /healthz
-  hosts:
-    - host: n8n.example.com
-      paths:
-        - path: /
-          pathType: Prefix
+# ingress:
+#   enabled: true
+#   className: alb
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+#     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
+#     alb.ingress.kubernetes.io/group.order: "20"
+#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+#     alb.ingress.kubernetes.io/ssl-redirect: '443'
+#     alb.ingress.kubernetes.io/healthcheck-path: /healthz
+#   hosts:
+#     - host: n8n.example.com
+#       paths:
+#         - path: /
+#           pathType: Prefix
