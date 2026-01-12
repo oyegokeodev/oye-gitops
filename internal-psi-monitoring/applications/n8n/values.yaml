@@ -37,7 +37,21 @@ main:
       port: http
 
 db:
-  type:  postgresdb
+  postgresdb:
+    # -- Control how many parallel open Postgres connections n8n should have. Increasing it may help with resource utilization, but too many connections may degrade performance.
+    poolSize: 2
+    # -- Postgres connection timeout (ms).
+    connectionTimeout: 20000
+    # -- Amount of time before an idle connection is eligible for eviction for being idle.
+    idleConnectionTimeout: 30000
+    # -- The PostgreSQL schema.
+    schema: public
+    # -- The PostgreSQL connection SSL settings. Find more information from here: https://docs.n8n.io/hosting/configuration/supported-databases-settings/#postgresdb
+    ssl:
+      # -- Whether to enable SSL.
+      enabled: true
+      # -- If n8n should reject unauthorized SSL connections (true) or not (false).
+      rejectUnauthorized: false
   
   # Database must be under 'main' for this chart version
   # -- External PostgreSQL parameters
