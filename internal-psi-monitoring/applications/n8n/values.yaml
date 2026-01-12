@@ -1,57 +1,37 @@
-# 1. N8N CONFIGURATION (Transform 1:1 to ENV variables)
-config:
+# In version 1.16.19, most settings are nested under 'main'
+main:
+  config:
+    # Basic n8n vars
+    N8N_HOST: "n8n.example.com"
+    N8N_PROTOCOL: "https"
+    GENERIC_TIMEZONE: "UTC"
+  
+  # Database must be under 'main' for this chart version
   db:
     type: postgresdb
-    postgresdb:
-      database: n8n
+    externalPostgresql:
       host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
       port: 20109
-      user: n8n_user
-  n8n:
-    host: "n8n.example.com"
-    protocol: "https"
-    secure_cookie: "true"
-  generic:
-    timezone: "UTC"
+      database: n8n
+      username: n8n_user
+      existingSecret: n8n-db-secret # Key must be 'password'
+      
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 256Mi
 
-# 2. N8N SECRETS
-# This maps to DB_POSTGRESDB_PASSWORD and N8N_ENCRYPTION_KEY
-secret:
-  db:
-    postgresdb:
-      # Use an existing secret for the DB password
-      # Ensure your secret 'n8n-db-secret' has the key 'password'
-      existingSecret: n8n-db-secret
-      secretKey: password
-  # n8n needs an encryption key to start; if you don't have one, 
-  # provide a random string here or use an existing secret.
-  n8n:
-    encryption_key: "your-random-32-char-string-here"
-
-# 3. KUBERNETES RESOURCES (Under the 'main' component)
-# main:
-#   resources:
-#     requests:
-#       cpu: 100m
-#       memory: 256Mi
-#     limits:
-#       cpu: 500m
-#       memory: 1Gi
-
-# 4. INGRESS (Standard at Root Level)
+# Ingress remains at the root level
 # ingress:
 #   enabled: true
 #   className: alb
 #   annotations:
 #     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/target-type: ip
 #     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
-#     alb.ingress.kubernetes.io/group.order: "20"
 #     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
 #     alb.ingress.kubernetes.io/ssl-redirect: '443'
 #     alb.ingress.kubernetes.io/healthcheck-path: /healthz
-#     alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
-#     alb.ingress.kubernetes.io/success-codes: "200"
 #   hosts:
 #     - host: n8n.example.com
 #       paths:
