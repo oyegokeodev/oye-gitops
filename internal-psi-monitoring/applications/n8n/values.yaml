@@ -1,11 +1,5 @@
 # In version 1.16.19, most settings are nested under 'main'
 main:
-
-  config:
-    # Basic n8n vars
-    N8N_HOST: "n8n.example.com"
-
-    GENERIC_TIMEZONE: "UTC"
   # -- Number of main nodes. Only enterprise license users can have one leader main node and mutiple follower main nodes.
   count: 1
   # -- Whether to enable the PodDisruptionBudget for the main pod.
