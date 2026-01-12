@@ -1,24 +1,34 @@
-# 1. DATABASE CONFIGURATION (Top-level)
-db:
-  type: postgresdb
-  externalPostgresql:
-    host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
-    port: 20109
-    database: n8n
-    username: n8n_user
-    # Ensure this secret exists with the key 'password'
-    existingSecret: n8n-db-secret
-
-# 2. CONFIGURATION (Environment Variables)
-# These are converted to env vars by the chart automatically.
+# 1. N8N CONFIGURATION (Transform 1:1 to ENV variables)
 config:
-  N8N_HOST: "n8n.example.com"
-  N8N_PROTOCOL: "https"
-  GENERIC_TIMEZONE: "UTC"
-  N8N_SECURE_COOKIE: "true"
-  N8N_ENABLE_COMMUNITY_NODES: "true"
+  db:
+    type: postgresdb
+    postgresdb:
+      database: n8n
+      host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
+      port: 20109
+      user: n8n_user
+  n8n:
+    host: "n8n.example.com"
+    protocol: "https"
+    secure_cookie: "true"
+  generic:
+    timezone: "UTC"
 
-# 3. KUBERNETES SETTINGS (Under 'main')
+# 2. N8N SECRETS
+# This maps to DB_POSTGRESDB_PASSWORD and N8N_ENCRYPTION_KEY
+secret:
+  db:
+    postgresdb:
+      # Use an existing secret for the DB password
+      # Ensure your secret 'n8n-db-secret' has the key 'password'
+      existingSecret: n8n-db-secret
+      secretKey: password
+  # n8n needs an encryption key to start; if you don't have one, 
+  # provide a random string here or use an existing secret.
+  n8n:
+    encryption_key: "your-random-32-char-string-here"
+
+# 3. KUBERNETES RESOURCES (Under the 'main' component)
 # main:
 #   resources:
 #     requests:
@@ -28,7 +38,7 @@ config:
 #       cpu: 500m
 #       memory: 1Gi
 
-# # 4. INGRESS (AWS ALB Shared)
+# 4. INGRESS (Standard at Root Level)
 # ingress:
 #   enabled: true
 #   className: alb
