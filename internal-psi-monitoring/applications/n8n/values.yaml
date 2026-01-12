@@ -1,22 +1,20 @@
-# 1. MAIN APPLICATION SETTINGS
 main:
   count: 1
-  # ADDED: Configuration block for environment variables
-  config:
-    # Fix for the "Spinning Setup" issue
-    N8N_PUSH_BACKEND: "websocket" 
-    # Since you are running locally for now
+  
+  # -- Extra environment variables (CRITICAL FIXES HERE)
+  extraEnvVars:
+    # 1. Fix the "Spinning Setup" by switching from SSE to WebSockets
+    N8N_PUSH_BACKEND: "websocket"
+    
+    # 2. Define your encryption key so it doesn't change on pod restarts
+    N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
+    
+    # 3. Enables the Community Nodes menu
+    N8N_ENABLE_COMMUNITY_NODES: "true"
+    
+    # 4. Identity settings for your local test
     N8N_HOST: "localhost"
     N8N_PROTOCOL: "http"
-    # Essential for credentials security
-    N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
-    # Enables community nodes as requested
-    N8N_ENABLE_COMMUNITY_NODES: "true"
-
-  pdb:
-    enabled: true
-    minAvailable: 1
-    maxUnavailable: null
 
   resources: 
     requests:
