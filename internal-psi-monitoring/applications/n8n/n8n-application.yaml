@@ -1,30 +1,30 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: n8n
-  namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
-spec:
-  project: default
-  sources:
-    # Source 1: The n8n Community Helm Chart
-    - repoURL: 'https://community-charts.github.io/helm-charts'
-      chart: n8n
-      targetRevision: 1.16.19  # Pinned version
-      helm:
-        # skipSchemaValidation: true
-        valueFiles:
-          - $myrepo/internal-psi-monitoring/applications/n8n/values.yaml
-    - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
-      targetRevision: HEAD
-      ref: myrepo
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: n8n
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: n8n
+#   namespace: argocd
+#   finalizers:
+#     - resources-finalizer.argocd.argoproj.io
+# spec:
+#   project: default
+#   sources:
+#     # Source 1: The n8n Community Helm Chart
+#     - repoURL: 'https://community-charts.github.io/helm-charts'
+#       chart: n8n
+#       targetRevision: 1.16.19  # Pinned version
+#       helm:
+#         # skipSchemaValidation: true
+#         valueFiles:
+#           - $myrepo/internal-psi-monitoring/applications/n8n/values.yaml
+#     - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'
+#       targetRevision: HEAD
+#       ref: myrepo
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: n8n
+#   syncPolicy:
+#     automated:
+#       prune: true
+#       selfHeal: true
+#     syncOptions:
+#       - CreateNamespace=true

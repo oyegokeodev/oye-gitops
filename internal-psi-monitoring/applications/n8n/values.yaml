@@ -1,73 +1,74 @@
-main:
-  count: 1
+# main:
+#   count: 1
   
-  # -- Extra environment variables (CRITICAL FIXES HERE)
-  extraEnvVars:
-    # 1. Fix the "Spinning Setup" by switching from SSE to WebSockets
-    N8N_PUSH_BACKEND: "websocket"
-    NODE_TLS_REJECT_UNAUTHORIZED: "0"
-    # 2. Define your encryption key so it doesn't change on pod restarts
-    N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
+#   # -- Extra environment variables (CRITICAL FIXES HERE)
+#   extraEnvVars:
+#     # 1. Fix the "Spinning Setup" by switching from SSE to WebSockets
+#     N8N_PUSH_BACKEND: "websocket"
+#     NODE_TLS_REJECT_UNAUTHORIZED: "0"
+#     # 2. Define your encryption key so it doesn't change on pod restarts
+#     N8N_ENCRYPTION_KEY: "your-random-32-char-string-here"
     
-    # 3. Enables the Community Nodes menu
-    N8N_ENABLE_COMMUNITY_NODES: "true"
+#     # 3. Enables the Community Nodes menu
+#     N8N_ENABLE_COMMUNITY_NODES: "true"
     
-    # 4. Identity settings for your local test
-    N8N_HOST: "localhost"
-    N8N_PROTOCOL: "http"
+#     # 4. Identity settings for your local test
+#     N8N_HOST: "localhost"
+#     N8N_PROTOCOL: "http"
+#     N8N_PORT: "5678"
 
-  resources: 
-    requests:
-      cpu: 100m
-      memory: 128Mi
-    limits:
-      cpu: 2000m
-      memory: 1Gi
+#   resources: 
+#     requests:
+#       cpu: 100m
+#       memory: 128Mi
+#     limits:
+#       cpu: 2000m
+#       memory: 1Gi
 
-  livenessProbe:
-    httpGet:
-      path: /healthz
-      port: http
+#   livenessProbe:
+#     httpGet:
+#       path: /healthz
+#       port: http
 
-  readinessProbe:
-    httpGet:
-      path: /healthz/readiness
-      port: http
+#   readinessProbe:
+#     httpGet:
+#       path: /healthz/readiness
+#       port: http
 
-# 2. DATABASE CONFIGURATION
-db:
-  type: postgresdb
-  postgresdb:
-    poolSize: 2
-    connectionTimeout: 20000
-    idleConnectionTimeout: 30000
-    schema: public
-    ssl:
-      enabled: true
-      rejectUnauthorized: false
+# # 2. DATABASE CONFIGURATION
+# db:
+#   type: postgresdb
+#   postgresdb:
+#     poolSize: 2
+#     connectionTimeout: 20000
+#     idleConnectionTimeout: 30000
+#     schema: public
+#     ssl:
+#       enabled: true
+#       rejectUnauthorized: false
   
-# 3. EXTERNAL POSTGRESQL (Root level for this chart)
-externalPostgresql:
-  host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
-  username: n8n_user
-  port: 20109
-  database: n8n
-  existingSecret: n8n-db-secret # Key must be 'password' inside the secret
+# # 3. EXTERNAL POSTGRESQL (Root level for this chart)
+# externalPostgresql:
+#   host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
+#   username: n8n_user
+#   port: 20109
+#   database: n8n
+#   existingSecret: n8n-db-secret # Key must be 'password' inside the secret
 
-# 4. INGRESS (AWS ALB)
-# ingress:
-#   enabled: true
-#   className: alb
-#   annotations:
-#     alb.ingress.kubernetes.io/scheme: internet-facing
-#     alb.ingress.kubernetes.io/target-type: ip
-#     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
-#     alb.ingress.kubernetes.io/group.order: "20"
-#     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-#     alb.ingress.kubernetes.io/ssl-redirect: '443'
-#     alb.ingress.kubernetes.io/healthcheck-path: /healthz
-#   hosts:
-#     - host: n8n.example.com
-#       paths:
-#         - path: /
-#           pathType: Prefix
+# # 4. INGRESS (AWS ALB)
+# # ingress:
+# #   enabled: true
+# #   className: alb
+# #   annotations:
+# #     alb.ingress.kubernetes.io/scheme: internet-facing
+# #     alb.ingress.kubernetes.io/target-type: ip
+# #     alb.ingress.kubernetes.io/group.name: "psi-monitoring"
+# #     alb.ingress.kubernetes.io/group.order: "20"
+# #     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+# #     alb.ingress.kubernetes.io/ssl-redirect: '443'
+# #     alb.ingress.kubernetes.io/healthcheck-path: /healthz
+# #   hosts:
+# #     - host: n8n.example.com
+# #       paths:
+# #         - path: /
+# #           pathType: Prefix
