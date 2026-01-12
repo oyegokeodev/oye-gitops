@@ -13,7 +13,7 @@ spec:
       chart: n8n
       targetRevision: 1.16.19  # Pinned version
       helm:
-        skipSchemaValidation: true
+        # skipSchemaValidation: true
         valueFiles:
           - $myrepo/internal-psi-monitoring/applications/n8n/values.yaml
     - repoURL: 'https://github.com/oyegokeodev/oye-gitops.git'

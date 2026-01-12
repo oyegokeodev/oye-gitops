@@ -7,14 +7,21 @@ main:
     GENERIC_TIMEZONE: "UTC"
   
   # Database must be under 'main' for this chart version
+  # -- External PostgreSQL parameters
+externalPostgresql:
+  # -- External PostgreSQL server host
+  host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
+  # -- External PostgreSQL username
+  username: n8n_user
+  port: 20109
+  # -- The name of the external PostgreSQL database. For more information: https://docs.n8n.io/hosting/configuration/supported-databases-settings/#required-permissions
+  database: n8n
+  # -- The name of an existing secret with PostgreSQL (must contain key `postgres-password`) and credentials.
+  # When it's set, the `externalPostgresql.password` parameter is ignored
+  existingSecret: n8n-db-secret
+
   db:
-    type: postgresdb
-    externalPostgresql:
-      host: pg-1e155c21-oyegokeodev-f11d.f.aivencloud.com
-      port: 20109
-      database: n8n
-      username: n8n_user
-      existingSecret: n8n-db-secret # Key must be 'password'
+    type:  postgresdb
       
   resources:
     limits:
