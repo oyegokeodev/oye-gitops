@@ -1,10 +1,46 @@
 # In version 1.16.19, most settings are nested under 'main'
 main:
+
   config:
     # Basic n8n vars
     N8N_HOST: "n8n.example.com"
-    N8N_PROTOCOL: "https"
+
     GENERIC_TIMEZONE: "UTC"
+  # -- Number of main nodes. Only enterprise license users can have one leader main node and mutiple follower main nodes.
+  count: 1
+  # -- Whether to enable the PodDisruptionBudget for the main pod.
+  pdb:
+    # -- Whether to enable the PodDisruptionBudget
+    enabled: true
+    # -- Minimum number of available replicas
+    minAvailable: 1
+    # -- Maximum number of unavailable replicas
+    maxUnavailable: null
+
+  # -- This block is for setting up the resource management for the main pod more information can be found here: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  resources: 
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 2000m
+      memory: 1Gi
+
+  # -- This is to setup the liveness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: http
+
+  # -- This is to setup the readiness probe for the main pod more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  readinessProbe:
+    httpGet:
+      path: /healthz/readiness
+      port: http
 
 db:
   type:  postgresdb
@@ -23,11 +59,6 @@ externalPostgresql:
   # When it's set, the `externalPostgresql.password` parameter is ignored
   existingSecret: n8n-db-secret
       
-resources:
-  limits:
-    memory: 1Gi
-  requests:
-    memory: 256Mi
 
 # Ingress remains at the root level
 # ingress:
