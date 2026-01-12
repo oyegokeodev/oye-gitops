@@ -5,6 +5,9 @@ main:
     N8N_HOST: "n8n.example.com"
     N8N_PROTOCOL: "https"
     GENERIC_TIMEZONE: "UTC"
+
+db:
+  type:  postgresdb
   
   # Database must be under 'main' for this chart version
   # -- External PostgreSQL parameters
@@ -19,9 +22,6 @@ externalPostgresql:
   # -- The name of an existing secret with PostgreSQL (must contain key `postgres-password`) and credentials.
   # When it's set, the `externalPostgresql.password` parameter is ignored
   existingSecret: n8n-db-secret
-
-  db:
-    type:  postgresdb
       
   resources:
     limits:
