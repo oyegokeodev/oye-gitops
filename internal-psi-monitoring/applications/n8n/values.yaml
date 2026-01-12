@@ -23,11 +23,11 @@ externalPostgresql:
   # When it's set, the `externalPostgresql.password` parameter is ignored
   existingSecret: n8n-db-secret
       
-  resources:
-    limits:
-      memory: 1Gi
-    requests:
-      memory: 256Mi
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    memory: 256Mi
 
 # Ingress remains at the root level
 # ingress:
